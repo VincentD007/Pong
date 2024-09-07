@@ -6,7 +6,7 @@ HEIGHT = 800
 WIDTH = 1200
 clock = pygame.time.Clock()
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
-
+score_font = pygame.font.SysFont("Comic Sans", 30, True, False)
 
 
 def main():
@@ -19,8 +19,8 @@ def main():
     walls = {
         "left_goal": pygame.rect.Rect(0, 0, 10, HEIGHT),
         "right_goal": pygame.rect.Rect(1190, 0, 10, HEIGHT),
-        "top_boarder": pygame.rect.Rect(0, 0, WIDTH, 10),
-        "bottom_boarder": pygame.rect.Rect(0, HEIGHT-10, WIDTH, 10)
+        "top_boarder": pygame.rect.Rect(0, -5, WIDTH, 5),
+        "bottom_boarder": pygame.rect.Rect(0, HEIGHT, WIDTH, 5)
         }
 
     while play_game:
@@ -54,12 +54,13 @@ def main():
             right_player_score += 1
             ball.reset()
         ball.draw(SCREEN)
-        print(ball.direction)
         draw_boarders(SCREEN, walls)
-
+        leftscore_display = score_font.render(str(left_player_score), 1, (255, 255, 255))
+        rightscore_display = score_font.render(str(right_player_score), 1, (255, 255, 255))
+        SCREEN.blit(leftscore_display, (WIDTH/2 - 60, 50))
+        SCREEN.blit(rightscore_display, (WIDTH/2 + 42, 50))
         pygame.display.update()
     pygame.quit()
-
 
 
 if __name__ == "__main__":
