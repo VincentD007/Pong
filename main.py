@@ -11,8 +11,8 @@ SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
 
 def main():
     ball = Ball()
-    left_paddle = pygame.rect.Rect(100, 325, 20, 150)
-    right_paddle = pygame.rect.Rect(1075, 325, 20, 150)
+    left_paddle = pygame.rect.Rect(100, 325, 20, 140)
+    right_paddle = pygame.rect.Rect(1075, 325, 20, 140)
     left_player_score = 0
     right_player_score = 0
     play_game = True
@@ -54,7 +54,7 @@ def main():
             right_player_score += 1
             ball.reset()
         ball.draw(SCREEN)
-        print(left_player_score)
+        print(ball.direction)
         draw_boarders(SCREEN, walls)
 
         pygame.display.update()
