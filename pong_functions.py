@@ -14,72 +14,75 @@ def draw_boarders(Screen, Walls):
         mid_spacing += 100
 
 
-def left_scored(walls, ball):
-    return pygame.Rect.colliderect(ball.rect, walls["right_goal"])
-
-
-def right_scored(walls, ball):
-    return pygame.Rect.colliderect(ball.rect, walls["left_goal"])
-
-
 def handle_collisions(ball, walls, left_paddle, right_paddle):
     def check_first_collision(ball_object):
         if not ball.first_hit:
-            ball_object.velocity += 8
+            ball_object.velocity += 5
             ball_object.first_hit = True
-
+    # Checks for ball collision with top boarder; Also checks if the ball is colliding with both the top boarder and a paddle at the same time
     if pygame.Rect.colliderect(ball.rect, walls["top_boarder"]):
-        reference_angle = ball.direction % math.pi
-        if reference_angle < math.pi/2:
-            ball.direction -= reference_angle * 2
-        elif reference_angle > math.pi/2:
-            ball.direction += (math.pi - reference_angle) * 2
+        if pygame.Rect.colliderect(ball.rect, left_paddle) or pygame.Rect.colliderect(ball.rect, right_paddle):
+            ball.direction += math.pi
+            return
+        else:
+            ball.direction *= -1
+    # Checks for ball collision with bottom boarder; Also checks if the ball is colliding with both the bottom boarder and a paddle at the same time
     elif pygame.Rect.colliderect(ball.rect, walls["bottom_boarder"]):
-        reference_angle = ball.direction % (2 * math.pi)
-        if reference_angle < 3 * math.pi/2:
-            ball.direction -= (math.pi/2 - ((3 * math.pi/2) - reference_angle)) * 2
-        elif reference_angle > 3 * math.pi/2:
-            ball.direction += ((2 * math.pi) - reference_angle) * 2
+        if pygame.Rect.colliderect(ball.rect, left_paddle) or pygame.Rect.colliderect(ball.rect, right_paddle):
+            ball.direction += math.pi
+            return
+        else:
+            ball.direction *= -1
 
+    mid_ball = ball.rect.y + 10
+    # Update ball angle based on left paddle collision
     if pygame.Rect.colliderect(ball.rect, left_paddle):
         mid_paddle = left_paddle.y + 70
-        mid_ball = ball.rect.y + 10
+        # Checks if ball collision is on upper half of Left Paddle
         if mid_ball <= mid_paddle - 10:
             if mid_ball >= mid_paddle - 20 :
                 ball.direction = math.pi/12
             elif mid_ball >= mid_paddle - 30:
                 ball.direction = math.pi/6
+            elif ball.rect.x + 10 < left_paddle.x + 15:
+                ball.direction = 2 * math.pi/3
             else:
                 ball.direction = math.pi/4
+        # Checks if ball collision is on lower half of Left Paddle
         elif mid_ball >= mid_paddle + 10:
             if mid_ball <= mid_paddle + 20:
                 ball.direction = -math.pi/12
             elif mid_ball <= mid_paddle + 40:
                 ball.direction = -math.pi/6
+            elif ball.rect.x + 10 < left_paddle.x + 15:
+                ball.direction = -2 * math.pi/3
             else:
-                if ball.rect.x < left_paddle.x + 10:
-                    ball.direction = -3 * math.pi/4
-                else:
-                    ball.direction = -math.pi/4
+                ball.direction = -math.pi/4
         else:
             ball.direction = 0
         check_first_collision(ball)
 
+    # Update ball angle based on right paddle collision
     elif pygame.Rect.colliderect(ball.rect, right_paddle):
         mid_paddle = right_paddle.y + 70
-        mid_ball = ball.rect.y + 10
+        # Checks if ball collision is on upper half of Right Paddle
         if mid_ball <= mid_paddle - 10:
             if mid_ball >= mid_paddle - 20 :
                 ball.direction = 11 * math.pi/12
             elif mid_ball >= mid_paddle - 30:
                 ball.direction = 5 * math.pi/6
+            elif ball.rect.x + 10 > right_paddle.x + 5:
+                ball.direction = math.pi/3
             else:
                 ball.direction = 3 * math.pi/4
+        # Checks if ball collision is on lower half of Right Paddle
         elif mid_ball >= mid_paddle + 10:
             if mid_ball <= mid_paddle + 20:
                 ball.direction = -11 * math.pi/12
             elif mid_ball <= mid_paddle + 40:
                 ball.direction = -5 * math.pi/6
+            elif ball.rect.x + 10 > right_paddle.x + 5:
+                ball.direction = -math.pi/3
             else:
                 ball.direction = -3 * math.pi/4
         else:
@@ -91,7 +94,7 @@ class Ball:
     def __init__(self) -> None:
         self.first_hit = False
         self.direction = random.choice([0, math.pi])
-        self.velocity = 5
+        self.velocity = 3
         self.rect = pygame.rect.Rect(590, 390, 20, 20)
         self.color = (255, 255, 255)
 
@@ -109,6 +112,6 @@ class Ball:
 
     def reset(self):
         self.first_hit = False
-        self.direction = math.pi
+        self.direction = random.choice([0, math.pi])
         self.velocity = 5
         self.rect = pygame.rect.Rect(590, 390, 20, 20)

@@ -24,41 +24,43 @@ def main():
         }
 
     while play_game:
-        clock.tick(60)
+        clock.tick(120)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 play_game = False
         SCREEN.fill((0, 0, 0))
 
         keys_pressed = pygame.key.get_pressed()
+        paddle_velocity = 7
         if keys_pressed[pygame.K_DOWN]:
-            if right_paddle.y + 10 < 650:
-                right_paddle.y += 10
+            if right_paddle.y + paddle_velocity < HEIGHT - 150:
+                right_paddle.y += paddle_velocity
         if keys_pressed[pygame.K_UP]:
-            if right_paddle.y - 10 > 0:
-                right_paddle.y -= 10
+            if right_paddle.y - paddle_velocity > 10:
+                right_paddle.y -= paddle_velocity
         if keys_pressed[pygame.K_LCTRL]:
-            if left_paddle.y + 10 < 650:
-                left_paddle.y += 10
+            if left_paddle.y + paddle_velocity < HEIGHT - 150:
+                left_paddle.y += paddle_velocity
         if keys_pressed[pygame.K_LSHIFT]:
-            if left_paddle.y - 10 > 0:
-                left_paddle.y -= 10
+            if left_paddle.y - paddle_velocity > 10:
+                left_paddle.y -= paddle_velocity
         pygame.draw.rect(SCREEN, (255, 255, 255), left_paddle)
         pygame.draw.rect(SCREEN, (255, 255, 255), right_paddle)
         ball.move()
-        handle_collisions(ball, walls, left_paddle, right_paddle)
-        if left_scored(walls, ball):
-            left_player_score += 1
-            ball.reset()
-        elif right_scored(walls, ball):
-            right_player_score += 1
-            ball.reset()
         ball.draw(SCREEN)
         draw_boarders(SCREEN, walls)
+        handle_collisions(ball, walls, left_paddle, right_paddle)
+        if pygame.Rect.colliderect(ball.rect, walls["right_goal"]):
+            left_player_score += 1
+            ball.reset()
+        elif pygame.Rect.colliderect(ball.rect, walls["left_goal"]):
+            right_player_score += 1
+            ball.reset()
         leftscore_display = score_font.render(str(left_player_score), 1, (255, 255, 255))
         rightscore_display = score_font.render(str(right_player_score), 1, (255, 255, 255))
         SCREEN.blit(leftscore_display, (WIDTH/2 - 60, 50))
         SCREEN.blit(rightscore_display, (WIDTH/2 + 42, 50))
+        
         pygame.display.update()
     pygame.quit()
 
