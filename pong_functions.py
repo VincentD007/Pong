@@ -13,7 +13,7 @@ def draw_boarders(Screen, Walls):
         pygame.draw.rect(Screen, (255, 255, 255), pygame.rect.Rect((Screen.get_width()/2) - 7, mid_spacing, 14, 50))
         mid_spacing += 100
 
-
+# Handles all ball collisions with the exception of goals
 def handle_collisions(ball, walls, left_paddle, right_paddle):
     def check_first_collision(ball_object):
         if not ball.first_hit:
@@ -109,9 +109,10 @@ class Ball:
     def draw(self, Screen):
         pygame.draw.rect(Screen, self.color, self.rect)
 
-
+    # Resets the balls position back to the center
+    # Only called when a player scores
     def reset(self):
         self.first_hit = False
         self.direction = random.choice([0, math.pi])
-        self.velocity = 5
+        self.velocity = 3
         self.rect = pygame.rect.Rect(590, 390, 20, 20)
